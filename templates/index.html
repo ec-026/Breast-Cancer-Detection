@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Cancer Prediction</title>
+	<meta content="" name="descriptison">
+	<meta content="" name="keywords">
+
+	<!-- Favicons -->
+	<link href="../static/img/favicon1.ico" rel="icon">
+	<link href="../static/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+	<!-- Google Fonts -->
+	<link
+		href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+		rel="stylesheet">
+
+	<style>
+	</style>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+	<link href="http://fonts.googleapis.com/css?family=Cookie" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="../static/css/style.css">
+</head>
+
+<body text="black">
+
+
+	<div class="login">
+		<!--Get input for predict the cancer-->
+		<center>
+			<div class="heading_name">
+				<h1>BREAST CANCER PREDICTION USING XGBOOST CLASSIFIER </h1>
+				<h2> ENTER FIELDS</h2>
+			</div>
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			{% for message in messages %}
+			<div class="space_place">
+				<h1>{{ message }}</h1>
+			</div>
+			{% endfor %}
+			{% endif %}
+			{% endwith %}
+			<form action="{{ url_for('home')}}" method="post">
+				<select name="sample_data" onchange="this.form.submit()">
+					<option value="">Select sample data</option>
+					{% for sample in data %}
+					<option value="{{ sample.id }}" {% if selected_sample_id==sample.id %} selected {% endif %}>
+						Sample {{ sample.id }} ({{ sample.diagnosis }})
+					</option>
+					{% endfor %}
+				</select>
+			</form>
+			<form action="{{ url_for('predict')}}" method="post">
+				<input type="text" name="mean_radius" value="{{ selected_sample_data.get('radius_mean', '') }}"
+					placeholder="mean radius" required="required" />
+				<input type="text" name="mean_texture" value="{{ selected_sample_data.get('texture_mean', '') }}"
+					placeholder="mean texture" required="required" />
+				<input type="text" name="mean_perimeter" value="{{ selected_sample_data.get('perimeter_mean', '') }}"
+					placeholder="mean perimeter" required="required" />
+				<input type="text" name="mean_area" value="{{ selected_sample_data.get('area_mean', '') }}"
+					placeholder="mean area" required="required" />
+				<input type="text" name="mean_smoothness" value="{{ selected_sample_data.get('smoothness_mean', '') }}"
+					placeholder="mean smoothness" required="required" />
+				<input type="text" name="mean_compactness"
+					value="{{ selected_sample_data.get('compactness_mean', '') }}" placeholder="mean compactness"
+					required="required" />
+				<input type="text" name="mean_concavity" value="{{ selected_sample_data.get('concavity_mean', '') }}"
+					placeholder="mean concavity" required="required" />
+				<input type="text" name="mean_concave_points"
+					value="{{ selected_sample_data.get('concave_points_mean', '') }}" placeholder="mean concave points"
+					required="required" />
+				<input type="text" name="mean_symmetry" value="{{ selected_sample_data.get('symmetry_mean', '') }}"
+					placeholder="mean symmetry" required="required" />
+				<input type="text" name="mean_fractal_dimension"
+					value="{{ selected_sample_data.get('fractal_dimension_mean', '') }}"
+					placeholder="mean fractal dimension" required="required" />
+				<input type="text" name="radius_error" value="{{ selected_sample_data.get('radius_se', '') }}"
+					placeholder="radius error" required="required" />
+				<input type="text" name="texture_error" value="{{ selected_sample_data.get('texture_se', '') }}"
+					placeholder="texture error" required="required" />
+				<input type="text" name="perimeter_error" value="{{ selected_sample_data.get('perimeter_se', '') }}"
+					placeholder="perimeter error" required="required" />
+				<input type="text" name="area_error" value="{{ selected_sample_data.get('area_se', '') }}"
+					placeholder="area error" required="required" />
+				<input type="text" name="smoothness_error" value="{{ selected_sample_data.get('smoothness_se', '') }}"
+					placeholder="smoothness error" required="required" />
+				<input type="text" name="compactness_error" value="{{ selected_sample_data.get('compactness_se', '') }}"
+					placeholder="compactness error" required="required" />
+				<input type="text" name="concavity_error" value="{{ selected_sample_data.get('concavity_se', '') }}"
+					placeholder="concavity error" required="required" />
+				<input type="text" name="concave_points_error"
+					value="{{ selected_sample_data.get('concave_points_se', '') }}" placeholder="concave points error"
+					required="required" />
+				<input type="text" name="symmetry_error" value="{{ selected_sample_data.get('symmetry_se', '') }}"
+					placeholder="symmetry error" required="required" />
+				<input type="text" name="fractal_dimension_error"
+					value="{{ selected_sample_data.get('fractal_dimension_se', '') }}"
+					placeholder="fractal dimension error" required="required" />
+				<input type="text" name="worst_radius" value="{{ selected_sample_data.get('radius_worst', '') }}"
+					placeholder="worst radius" required="required" />
+				<input type="text" name="worst_texture" value="{{ selected_sample_data.get('texture_worst', '') }}"
+					placeholder="worst texture" required="required" />
+				<input type="text" name="worst_perimeter" value="{{ selected_sample_data.get('perimeter_worst', '') }}"
+					placeholder="worst perimeter" required="required" />
+				<input type="text" name="worst_area" value="{{ selected_sample_data.get('area_worst', '') }}"
+					placeholder="worst area" required="required" />
+				<input type="text" name="worst_smoothness"
+					value="{{ selected_sample_data.get('smoothness_worst', '') }}" placeholder="worst smoothness"
+					required="required" />
+				<input type="text" name="worst_compactness"
+					value="{{ selected_sample_data.get('compactness_worst', '') }}" placeholder="worst compactness"
+					required="required" />
+				<input type="text" name="worst_concavity" value="{{ selected_sample_data.get('concavity_worst', '') }}"
+					placeholder="worst concavity" required="required" />
+				<input type="text" name="worst_concave_points"
+					value="{{ selected_sample_data.get('concave_points_worst', '') }}"
+					placeholder="worst concave points" required="required" />
+				<input type="text" name="worst_symmetry" value="{{ selected_sample_data.get('symmetry_worst', '') }}"
+					placeholder="worst symmetry" required="required" />
+				<input type="text" name="worst_fractal_dimension"
+					value="{{ selected_sample_data.get('fractal_dimension_worst', '') }}"
+					placeholder="worst fractal dimension" required="required" />
+				<!-- show button-->
+				<div class="space_place">
+					<div class="button_cont" align="center"><a class="button_css">
+							<button text="blue" type="submit" class="btn btn-primary btn-block btn-large"><strong>
+									<h4>CLICK HERE TO PREDICT </h4>
+								</strong>
+							</button></a>
+					</div>
+				</div>
+			</form>
+		</center>
+		<!--Show predicted output using ML model-->
+		<div>
+			<center>
+				<h2>
+					<p>Dataset used:<a
+							href="https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)"
+							style="color: orange;"> CANCER.NET</a></p>
+				</h2>
+				<h2>
+					<p>Made with ❤️</p>
+				</h2>
+
+			</center>
+		</div>
+
+</body>
+
+</html>
